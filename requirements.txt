@@ -1,0 +1,4 @@
+Django              3.2.7  
+djangorestframework 3.12.4
+djangorestframework-gis 0.17 
+flake8==3.9.2
