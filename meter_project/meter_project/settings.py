@@ -1,4 +1,5 @@
 from pathlib import Path
+#import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_gis',
+    'django.contrib.gis',
     'django_filters',
 
     'core',
@@ -69,6 +71,7 @@ WSGI_APPLICATION = 'meter_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -116,6 +119,9 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# GDAL_LIBRARY_PATH = config('GDAL_LIBRARY_PATH')
+# GEOS_LIBRARY_PATH = config('GEOS_LIBRARY_PATH')
 
 
 REST_FRAMEWORK = {
