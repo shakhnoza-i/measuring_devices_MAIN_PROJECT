@@ -1,7 +1,7 @@
 #import python regex module
 import re
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
+from django.core import validators
 from django.contrib .auth.models import User
 from django.contrib.gis.db.models import PointField
 from uuid import UUID, uuid4
@@ -73,7 +73,7 @@ class Apartment(models.Model):
 
 class Device(models.Model):
     uuid_deviсe = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
-    dev_eui = models.CharField(validators=[MinLengthValidator(16)], max_length=16)
+    dev_eui = models.CharField(validators=[validators.MinLengthValidator(16)], max_length=16)
     activation_time = models.DateTimeField(auto_now_add=True)
     last_action_time = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=False)
