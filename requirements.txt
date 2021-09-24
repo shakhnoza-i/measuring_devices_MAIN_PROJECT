@@ -1,6 +1,7 @@
 Django==3.2.7  
 djangorestframework==3.12.4
-djangorestframework-gis==0.17 
+djangorestframework-gis==0.17 # djangorestframework-gis --version
 django-filter==2.4.0
 flake8==3.9.2
-gdal==3.0.3
+pygdal==3.0.4.6 # gdal-config --version, install libgdal-dev, gdal, pygdal
+psycopg2==2.8.0  # to communicate between django and postgres

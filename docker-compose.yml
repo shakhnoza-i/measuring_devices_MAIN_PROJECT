@@ -1,12 +1,27 @@
 version: "3"
 
 services:
-  app:
-    build:
-      context: .
+  meter_project: # name of our service
+    build: # build configuration
+      context: . # dot means in our current directory
     ports:
       - "8000:8000" #from port 8000 on our host to port 8000 on our image.
     volumes: #volume allows us to get the updates that we make to our project into our Docker image in real time.
-      - ./app:/app #maps the app directory which we have in our project to the app directory in our Docker image.
+      - ./meter_project:/meter_project #maps the app directory which we have in our project to the app directory in our Docker image.
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py runserver 0.0.0.0:8000" 
+    environment:
+      - DB_HOST=db # equal to the name of the service
+      - DB_NAME=app # equal to the POSTGRES_DB name
+      - DB_USER=postgres # equal to the POSTGRES_USER
+      - DB_PASS=secretpassword # equal to the POSTGRES_PASSWORD
+    depends_on: # when our app service depends on db
+      - db
+      #- redis
+
+  db:
+    image: postgis/postgis
+    environment:  # important that this is written exactly as the setting that Postgres container is expecting when it starts.
+      - POSTGRES_DB=app
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=secretpassword
