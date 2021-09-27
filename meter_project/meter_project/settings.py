@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_gis',
     'django.contrib.gis',
     'django_filters',
@@ -71,7 +72,7 @@ WSGI_APPLICATION = 'meter_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql', #postgresql
+        # 'ENGINE': 'django.db.backends.postgresql', #postgresql
         'ENGINE': 'django.contrib.gis.db.backends.postgis', #postgresql -'django.contrib.gis.db.backends.postgis',
         # 'NAME': BASE_DIR / 'db.sqlite3',
         'HOST': os.environ.get('DB_HOST'),

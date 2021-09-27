@@ -1,4 +1,7 @@
 version: "3"
+volumes:
+  dbbackups:
+  postgis-data:
 
 services:
   meter_project: # name of our service
@@ -20,8 +23,11 @@ services:
       #- redis
 
   db:
-    image: postgis/postgis
+    image: kartoza/postgis:13-3.1
+    volumes:
+      - postgis-data:/var/lib/postgresql
+      - dbbackups:/backups
     environment:  # important that this is written exactly as the setting that Postgres container is expecting when it starts.
       - POSTGRES_DB=app
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=secretpassword
+      - POSTGRES_PASSWORD=secretpassword -d postgis/postgis
