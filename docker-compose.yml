@@ -12,22 +12,28 @@ services:
     volumes: #volume allows us to get the updates that we make to our project into our Docker image in real time.
       - ./meter_project:/meter_project #maps the app directory which we have in our project to the app directory in our Docker image.
     command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000" 
+      sh -c "sleep 5; python3 manage.py runserver 0.0.0.0:8000" 
     environment:
       - DB_HOST=db # equal to the name of the service
-      - DB_NAME=app # equal to the POSTGRES_DB name
-      - DB_USER=postgres # equal to the POSTGRES_USER
-      - DB_PASS=secretpassword # equal to the POSTGRES_PASSWORD
+      - DB_NAME=gis # equal to the POSTGRES_DB name
+      - DB_USER=docker # equal to the POSTGRES_USER
+      - DB_PASS=docker # equal to the POSTGRES_PASSWORD
     depends_on: # when our app service depends on db
       - db
       #- redis
 
   db:
     image: kartoza/postgis:13-3.1
+    ports:
+      - 5432:5432
     volumes:
       - postgis-data:/var/lib/postgresql
       - dbbackups:/backups
+
     environment:  # important that this is written exactly as the setting that Postgres container is expecting when it starts.
-      - POSTGRES_DB=app
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=secretpassword -d postgis/postgis
+      - POSTGRES_DB=gis
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
+
+    restart: on-failure

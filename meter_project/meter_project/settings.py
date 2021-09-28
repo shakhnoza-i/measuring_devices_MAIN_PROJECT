@@ -73,8 +73,7 @@ WSGI_APPLICATION = 'meter_project.wsgi.application'
 DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.postgresql', #postgresql
-        'ENGINE': 'django.contrib.gis.db.backends.postgis', #postgresql -'django.contrib.gis.db.backends.postgis',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis', #postgresql -'django.contrib.gis.db.backends.postgis'
         'HOST': os.environ.get('DB_HOST'),
         'NAME': os.environ.get('DB_NAME'),
         'USER': os.environ.get('DB_USER'),

@@ -1,5 +1,35 @@
 from rest_framework import serializers
 from core.models import City, District, Street, House, Apartment, Device, Meter
+from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.relations import RelatedField
+
+
+class UUIDRelatedField(RelatedField):
+    """
+    A read-write field that represents the target of the relationship
+    by a unique 'slug' attribute.
+    """
+    default_error_messages = {
+        'does_not_exist': _('Object with {uuid_field}={value} does not exist.'),
+        'invalid': _('Invalid value.'),
+    }
+
+    def __init__(self, uuid_field=None, **kwargs):
+        assert uuid_field is not None, 'The `uuid_field` argument is required.'
+        self.uuid_field = uuid_field
+        super().__init__(**kwargs)
+
+    def to_internal_value(self, data):
+        try:
+            return self.get_queryset().get(**{self.uuid_field: data})
+        except ObjectDoesNotExist:
+            self.fail('does_not_exist', slug_name=self.uuid_field)
+        except (TypeError, ValueError):
+            self.fail('invalid')
+
+    def to_representation(self, obj):
+        return getattr(obj, self.uuid_field)
 
 
 class CitySerializer(serializers.ModelSerializer):
@@ -19,7 +49,7 @@ class DistrictSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = District
-        exclude = ('locate',)
+        fields = "__all__"
 
 
 class StreetSerializer(serializers.ModelSerializer):
@@ -28,7 +58,7 @@ class StreetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Street
-        exclude = ('locate',)
+        fields = "__all__"
 
 
 class HouseSerializer(serializers.ModelSerializer):
@@ -37,7 +67,7 @@ class HouseSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = House
-        exclude = ('locate',)
+        fields = "__all__"
 
 
 class ApartmentSerializer(serializers.ModelSerializer):
@@ -46,20 +76,22 @@ class ApartmentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Apartment
-        exclude = ('locate',)
+        fields = "__all__"
 
 
 class DeviceSerializer(serializers.ModelSerializer):
 
-    meter = serializers.StringRelatedField(many=True, read_only=True)
+    meter = UUIDRelatedField(many=True, queryset=Meter.objects.all(), uuid_field='uuid_meter')
     
     class Meta:
         model = Device
-        exclude = ('locate',)
+        fields = "__all__"
 
 
 class MeterSerializer(serializers.ModelSerializer):
+
+    apartment = serializers.CharField(source='apartment.name')
     
     class Meta:
         model = Meter
-        exclude = ('locate',)
+        fields = "__all__"
