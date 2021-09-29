@@ -5,6 +5,7 @@ from django.core import validators
 from django.contrib .auth.models import User
 from django.contrib.gis.db.models import PointField
 from uuid import UUID, uuid4
+from django.contrib .auth.models import User
 
 
 class City(models.Model):
@@ -96,7 +97,8 @@ class Meter(models.Model):
     # charfield format is used yet, then necessary to create class with few options of physical units which is used by company
     unit = models.CharField(max_length=20) 
     device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="meter")
-    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE)
+    # apartment = models.ForeignKey(Device, verbose_name = u'apartment', on_delete=models.CASCADE)
+    # city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="district")
 
     def __str__(self):
         return self.unit

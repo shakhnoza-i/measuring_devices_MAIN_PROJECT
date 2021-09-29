@@ -90,7 +90,7 @@ class DeviceSerializer(serializers.ModelSerializer):
 
 class MeterSerializer(serializers.ModelSerializer):
 
-    apartment = serializers.CharField(source='apartment.name')
+    #apartment = serializers.CharField(source='apartment.name')
     
     class Meta:
         model = Meter

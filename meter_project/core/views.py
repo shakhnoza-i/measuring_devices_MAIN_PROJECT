@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from core.models import City, District, Street, House, Apartment, Device, Meter
 from core.serializers import (CitySerializer, DistrictSerializer, 
                               StreetSerializer, HouseSerializer, ApartmentSerializer, 
@@ -10,6 +11,19 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from datetime import datetime, timedelta, time
+from django.utils import timezone
+from django.db import models, migrations
+
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ('documents', '0042_auto_19700101-0000'),
+    ]
+
+    operations = [
+        migrations.RunSQL('ALTER TABLE documents_document_tags ALTER tag_id TYPE varchar(32);'),
+    ]
 
 
 class CityListGV(generics.ListCreateAPIView):
@@ -83,6 +97,18 @@ class DeviceListGV(generics.ListCreateAPIView):
     serializer_class = DeviceSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['dev_eui', 'owner', 'uuid_deviсe']
+
+    #period = Device.objects.filter(date__range=["2011-01-01", "2011-01-31"])
+    def get_queryset(self):
+        start_date = models.DateTimeField()
+        end_date = models.DateTimeField()
+        #books = Device.objects.filter(last_action_time=(start_date, end_date))
+        queryset = Device.objects.all()
+        last_action_time = self.request.query_params.get('last_action_time')
+        if last_action_time is not None:
+            queryset = queryset.filter(last_action_time=(start_date, end_date))
+        return queryset
+
 
 class DeviceDetailGV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Device.objects.all()
