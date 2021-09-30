@@ -126,5 +126,3 @@ class MeterListGV(generics.ListCreateAPIView):
 class MeterDetailGV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Meter.objects.all()
     serializer_class = MeterSerializer
-
-

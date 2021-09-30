@@ -1,9 +1,19 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
+
+
+for user in User.objects.all():
+    Token.objects.get_or_create(user=user)
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    password2 = serializers.CharField(style = {'input_type':'password'},write_only=True)
+
+
+    name = serializers.CharField(max_length = 30)
+    surname = serializers.CharField(max_length = 30)
+    password2 = serializers.CharField(style = {'input_type':'password'}, write_only=True)
+    description = serializers.CharField(max_length = 255)
 
     class Meta:
         model = User
@@ -23,7 +33,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         if User.objects.filter(email=self.validated_data['email']).exists():
             raise serializers.ValidationError({'error':'Email already exists!'})
 
-        account = User(email=self.validated_data['email'],username=self.validated_data['username'])
+        if User.objects.filter(username=self.validated_data['username']).exists():
+            raise serializers.ValidationError({'error':'Username already exists!'})
+
+        account = User(email=self.validated_data['email'],username=self.validated_data['username'], 
+        name=self.validated_data['name'], surname=self.validated_data['surname'])
         account.set_password(password)
         account.save()
 

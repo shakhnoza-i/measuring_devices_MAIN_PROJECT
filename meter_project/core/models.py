@@ -9,6 +9,7 @@ from django.contrib .auth.models import User
 
 
 class City(models.Model):
+    creater = models.ForeignKey(User, on_delete=models.CASCADE)
     uuid_city = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     geo = PointField()
     name = models.CharField(max_length=30)
@@ -21,6 +22,7 @@ class City(models.Model):
 
 
 class District(models.Model):
+    creater = models.ForeignKey(User, on_delete=models.CASCADE)
     uuid_district = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     geo = PointField()
     name = models.CharField(max_length=30)
@@ -34,6 +36,7 @@ class District(models.Model):
 
 
 class Street(models.Model):
+    creater = models.ForeignKey(User, on_delete=models.CASCADE)
     uuid_street = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     geo = PointField()
     name = models.CharField(max_length=30)
@@ -47,6 +50,7 @@ class Street(models.Model):
 
 
 class House(models.Model):
+    creater = models.ForeignKey(User, on_delete=models.CASCADE)
     uuid_house = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     geo = PointField()
     name = models.CharField(max_length=30)
@@ -60,6 +64,7 @@ class House(models.Model):
 
 
 class Apartment(models.Model):
+    creater = models.ForeignKey(User, on_delete=models.CASCADE)
     uuid_apartment = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     geo = PointField()
     name = models.CharField(max_length=30)
@@ -73,6 +78,7 @@ class Apartment(models.Model):
 
 
 class Device(models.Model):
+    creater = models.ForeignKey(User, on_delete=models.CASCADE)
     uuid_deviсe = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     dev_eui = models.CharField(validators=[validators.MinLengthValidator(16)], max_length=16)
     activation_time = models.DateTimeField(auto_now_add=True)
@@ -88,6 +94,7 @@ class Device(models.Model):
 
 
 class Meter(models.Model):
+    creater = models.ForeignKey(User, on_delete=models.CASCADE)
     uuid_meter = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     serial_number = models.IntegerField()
     active = models.BooleanField(default=False)

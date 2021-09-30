@@ -39,7 +39,8 @@ class CitySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = City
-        fields = "__all__"
+        exclude = ('creater',)
+        #fields = "__all__"
 
 
 class DistrictSerializer(serializers.ModelSerializer):
@@ -49,7 +50,8 @@ class DistrictSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = District
-        fields = "__all__"
+        exclude = ('creater',)
+        #fields = "__all__"
 
 
 class StreetSerializer(serializers.ModelSerializer):
@@ -58,7 +60,8 @@ class StreetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Street
-        fields = "__all__"
+        exclude = ('creater',)
+        #fields = "__all__"
 
 
 class HouseSerializer(serializers.ModelSerializer):
@@ -67,7 +70,8 @@ class HouseSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = House
-        fields = "__all__"
+        exclude = ('creater',)
+        #fields = "__all__"
 
 
 class ApartmentSerializer(serializers.ModelSerializer):
@@ -76,7 +80,8 @@ class ApartmentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Apartment
-        fields = "__all__"
+        exclude = ('creater',)
+        #fields = "__all__"
 
 
 class DeviceSerializer(serializers.ModelSerializer):
@@ -85,7 +90,8 @@ class DeviceSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Device
-        fields = "__all__"
+        exclude = ('creater',)
+        #fields = "__all__"
 
 
 class MeterSerializer(serializers.ModelSerializer):
@@ -94,4 +100,5 @@ class MeterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Meter
-        fields = "__all__"
+        exclude = ('creater',)
+        #fields = "__all__"
