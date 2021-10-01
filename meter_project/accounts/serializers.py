@@ -10,14 +10,14 @@ for user in User.objects.all():
 class RegistrationSerializer(serializers.ModelSerializer):
 
 
-    name = serializers.CharField(max_length = 30)
-    surname = serializers.CharField(max_length = 30)
+    first_name = serializers.CharField(max_length = 30)
+    last_name = serializers.CharField(max_length = 30)
     password2 = serializers.CharField(style = {'input_type':'password'}, write_only=True)
-    description = serializers.CharField(max_length = 255)
+    #description = serializers.CharField(max_length = 255, allow_blank=True)
 
     class Meta:
         model = User
-        fields = ['name', 'surname', 'username','email', 'password', 'password2', 'description']
+        fields = ['first_name', 'last_name', 'username','email', 'password', 'password2']
         extra_kwargs = {
             'password':{'write_only':True}
             }
@@ -37,7 +37,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'error':'Username already exists!'})
 
         account = User(email=self.validated_data['email'],username=self.validated_data['username'], 
-        name=self.validated_data['name'], surname=self.validated_data['surname'])
+        first_name=self.validated_data['first_name'], last_name=self.validated_data['last_name'])
         account.set_password(password)
         account.save()
 

@@ -11,8 +11,6 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from datetime import datetime, timedelta, time
-from django.utils import timezone
 from django.db import models, migrations
 
 

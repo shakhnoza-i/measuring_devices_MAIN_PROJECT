@@ -18,6 +18,7 @@ RUN apt-get install -yq libxml2-dev libxslt1-dev
 RUN apt-get install -yq gdal-bin
 RUN apt-get install -yq libgdal-dev
 
+
 # 2. from out requirements.txt file copy to docker image file
 COPY ./requirements.txt /requirements.txt
 # the dependencies for psycopg2 to communicate between django and postgres
@@ -25,7 +26,7 @@ COPY ./requirements.txt /requirements.txt
 # # virtual - is it sets up an alias for our dependencies that we can use to easily remove all those dependencies later.
 # RUN apt-get add --update --no-cache --virtual .tmp-build-deps \
 #       gcc libc-dev linux-headers postgresql-dev
-RUN pip install -r /requirements.txt 
+RUN pip3 install -r /requirements.txt 
 # RUN apt-get del .tmp-build-deps
 
 # 3. making directory within our Docker image that we can use to store our application source code
