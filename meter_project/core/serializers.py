@@ -34,23 +34,20 @@ class UUIDRelatedField(RelatedField):
 
 class CitySerializer(serializers.ModelSerializer):
 
-    district = serializers.StringRelatedField(many=True, read_only=True) # StringRelated - return what we defined in __str__
-    #district = DistrictSerializer(many=True, read_only=True)
+    district = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
+        depth = 2
         model = City
-        #exclude = ('creater',)
         fields = "__all__"
 
 
 class DistrictSerializer(serializers.ModelSerializer):
 
-    #locate = serializers.CharField(sourse = 'locate.name')
     street = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = District
-        #exclude = ('creater',)
         fields = "__all__"
 
 
@@ -60,7 +57,6 @@ class StreetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Street
-        #exclude = ('creater',)
         fields = "__all__"
 
 
@@ -70,7 +66,6 @@ class HouseSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = House
-        #exclude = ('creater',)
         fields = "__all__"
 
 
@@ -80,7 +75,6 @@ class ApartmentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Apartment
-        #exclude = ('creater',)
         fields = "__all__"
 
 
@@ -90,7 +84,6 @@ class DeviceSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Device
-        #exclude = ('creater',)
         fields = "__all__"
 
 
@@ -100,5 +93,5 @@ class MeterSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Meter
-        #exclude = ('creater',)
         fields = "__all__"
+

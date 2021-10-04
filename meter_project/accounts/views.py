@@ -7,7 +7,8 @@ from rest_framework.decorators import api_view
 from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from django.contrib.auth.models import User
+from .models import Customer
+
 from accounts.serializers import RegistrationSerializer
 
 
@@ -26,6 +27,7 @@ def logout_view(request):
 #             return Response(status=status.HTTP_200_OK)
 
 
+
 @api_view(['POST'])
 def registration_view(request, *args, **kwargs):
     if request.method == 'POST':
@@ -39,7 +41,6 @@ def registration_view(request, *args, **kwargs):
             data['email'] = account.email
             data['first_name'] = account.first_name
             data['last_name'] = account.last_name
-            #data['description'] = account.description
 
             refresh = RefreshToken.for_user(account)
             # token = Token.objects.get(user=account).key
@@ -57,7 +58,7 @@ def registration_view(request, *args, **kwargs):
 
 class SearchUserView(generics.ListAPIView):
     
-    queryset = User.objects.all()
+    queryset = Customer.objects.all()
     serializer_class = RegistrationSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['username', 'email']

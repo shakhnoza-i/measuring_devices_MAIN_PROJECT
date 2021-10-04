@@ -10,77 +10,42 @@ from uuid import UUID, uuid4
 from django.contrib.auth.models import User
 
 
-class City(models.Model):
-    creater = models.ForeignKey(User, default = superuser, on_delete=models.CASCADE)
-    uuid_city = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
+
+class Node(models.Model):   
+    uuid = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     geo = PointField()
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=255, blank=True)
     owner = models.CharField(max_length=30, blank=True)
     address = models.TextField(max_length=150)
 
-    def __str__(self):
-        return self.name
-
-
-class District(models.Model):
-    #creater = models.ForeignKey(User, on_delete=models.CASCADE)
-    uuid_district = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
-    geo = PointField()
-    name = models.CharField(max_length=30)
-    description = models.CharField(max_length=255, blank=True)
-    owner = models.CharField(max_length=30, blank=True)
-    address = models.TextField(max_length=150)
-    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="district")
+    class Meta:
+        abstract = True
 
     def __str__(self):
         return self.name
 
+class City(Node):
+    pass
 
-class Street(models.Model):
-    #creater = models.ForeignKey(User, on_delete=models.CASCADE)
-    uuid_street = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
-    geo = PointField()
-    name = models.CharField(max_length=30)
-    description = models.CharField(max_length=255, blank=True)
-    owner = models.CharField(max_length=30, blank=True)
-    address = models.TextField(max_length=150)
-    district = models.ForeignKey(District, on_delete=models.CASCADE, related_name="street")
-
-    def __str__(self):
-        return self.name
+class District(Node):
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="districts")
 
 
-class House(models.Model):
-    #creater = models.ForeignKey(User, on_delete=models.CASCADE)
-    uuid_house = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
-    geo = PointField()
-    name = models.CharField(max_length=30)
-    description = models.CharField(max_length=255, blank=True)
-    owner = models.CharField(max_length=30, blank=True)
-    address = models.TextField(max_length=150)
-    street = models.ForeignKey(Street, on_delete=models.CASCADE, related_name="house")
-
-    def __str__(self):
-        return self.name
+class Street(Node):
+    district = models.ForeignKey(District, on_delete=models.CASCADE, related_name="streets")
 
 
-class Apartment(models.Model):
-    #creater = models.ForeignKey(User, on_delete=models.CASCADE)
-    uuid_apartment = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
-    geo = PointField()
-    name = models.CharField(max_length=30)
-    description = models.CharField(max_length=255, blank=True)
-    owner = models.CharField(max_length=30, blank=True)
-    address = models.TextField(max_length=150)
-    house = models.ForeignKey(House, on_delete=models.CASCADE, related_name="apartment")
+class House(Node):
+    street = models.ForeignKey(Street, on_delete=models.CASCADE, related_name="houses")
 
-    def __str__(self):
-        return self.name
+
+class Apartment(Node):
+    house = models.ForeignKey(House, on_delete=models.CASCADE, related_name="apartments")
+
 
 
 class Device(models.Model):
-    #creater = models.ForeignKey(User, on_delete=models.CASCADE)
     uuid_deviсe = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     dev_eui = models.CharField(validators=[validators.MinLengthValidator(16)], max_length=16)
     activation_time = models.DateTimeField(auto_now_add=True)
@@ -96,7 +61,7 @@ class Device(models.Model):
 
 
 class Meter(models.Model):
-    #creater = models.ForeignKey(User, on_delete=models.CASCADE)
+    
     uuid_meter = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     serial_number = models.IntegerField()
     active = models.BooleanField(default=False)
@@ -111,3 +76,4 @@ class Meter(models.Model):
 
     def __str__(self):
         return self.unit
+

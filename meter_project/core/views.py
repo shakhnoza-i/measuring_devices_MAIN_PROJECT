@@ -1,4 +1,6 @@
 from __future__ import unicode_literals
+
+from django.http.response import HttpResponse
 from core.models import City, District, Street, House, Apartment, Device, Meter
 from core.serializers import (CitySerializer, DistrictSerializer, 
                               StreetSerializer, HouseSerializer, ApartmentSerializer, 
@@ -13,15 +15,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from django.db import models, migrations
 
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 
-class Migration(migrations.Migration):
-    dependencies = [
-        ('documents', '0042_auto_19700101-0000'),
-    ]
+from django.apps import apps
 
-    operations = [
-        migrations.RunSQL('ALTER TABLE documents_document_tags ALTER tag_id TYPE varchar(32);'),
-    ]
+from accounts.models import Customer
 
 
 class CityListGV(generics.ListCreateAPIView):
@@ -31,11 +30,24 @@ class CityListGV(generics.ListCreateAPIView):
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid_city']
 
 
-
-class CityDetailGV(generics.RetrieveUpdateDestroyAPIView):
+class CityDetailGV(generics.RetrieveUpdateAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
 
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='city')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
 
 
 class DistrictListGV(generics.ListCreateAPIView):
@@ -45,10 +57,24 @@ class DistrictListGV(generics.ListCreateAPIView):
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid_district']
 
 
-class DistrictDetailGV(generics.RetrieveUpdateDestroyAPIView):
+class DistrictDetailGV(generics.RetrieveUpdateAPIView):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
 
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='district')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
 
 
 class StreetListGV(generics.ListCreateAPIView):
@@ -58,10 +84,24 @@ class StreetListGV(generics.ListCreateAPIView):
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid_street']
 
 
-class StreetDetailGV(generics.RetrieveUpdateDestroyAPIView):
+class StreetDetailGV(generics.RetrieveUpdateAPIView):
     queryset = Street.objects.all()
     serializer_class = StreetSerializer
 
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='street')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
 
 
 class HouseListGV(generics.ListCreateAPIView):
@@ -71,10 +111,24 @@ class HouseListGV(generics.ListCreateAPIView):
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid_house']
 
 
-class HouseDetailGV(generics.RetrieveUpdateDestroyAPIView):
+class HouseDetailGV(generics.RetrieveUpdateAPIView):
     queryset = House.objects.all()
     serializer_class = HouseSerializer
 
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='house')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
 
 
 class ApartmentListGV(generics.ListCreateAPIView):
@@ -84,10 +138,24 @@ class ApartmentListGV(generics.ListCreateAPIView):
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid_apartment']
 
 
-class ApartmentDetailGV(generics.RetrieveUpdateDestroyAPIView):
+class ApartmentDetailGV(generics.RetrieveUpdateAPIView):
     queryset = Apartment.objects.all()
     serializer_class = ApartmentSerializer
 
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='apartment')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
 
 
 class DeviceListGV(generics.ListCreateAPIView):
@@ -112,6 +180,20 @@ class DeviceDetailGV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Device.objects.all()
     serializer_class = DeviceSerializer
 
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='device')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
 
 
 class MeterListGV(generics.ListCreateAPIView):
@@ -124,3 +206,18 @@ class MeterListGV(generics.ListCreateAPIView):
 class MeterDetailGV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Meter.objects.all()
     serializer_class = MeterSerializer
+
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='meter')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)  
