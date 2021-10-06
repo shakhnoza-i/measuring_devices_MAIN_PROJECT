@@ -46,7 +46,7 @@ class Apartment(Node):
 
 
 class Device(models.Model):
-    uuid_deviсe = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
+    uuid = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     dev_eui = models.CharField(validators=[validators.MinLengthValidator(16)], max_length=16)
     activation_time = models.DateTimeField(auto_now_add=True)
     last_action_time = models.DateTimeField(auto_now=True)
@@ -62,7 +62,7 @@ class Device(models.Model):
 
 class Meter(models.Model):
     
-    uuid_meter = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
+    uuid = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     serial_number = models.IntegerField()
     active = models.BooleanField(default=False)
     activation_time = models.DateTimeField(auto_now_add=True)
@@ -76,4 +76,3 @@ class Meter(models.Model):
 
     def __str__(self):
         return self.unit
-

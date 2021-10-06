@@ -34,7 +34,7 @@ class UUIDRelatedField(RelatedField):
 
 class CitySerializer(serializers.ModelSerializer):
 
-    district = serializers.StringRelatedField(many=True, read_only=True)
+    districts = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         depth = 2
@@ -44,7 +44,7 @@ class CitySerializer(serializers.ModelSerializer):
 
 class DistrictSerializer(serializers.ModelSerializer):
 
-    street = serializers.StringRelatedField(many=True, read_only=True)
+    streets = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = District
@@ -53,7 +53,7 @@ class DistrictSerializer(serializers.ModelSerializer):
 
 class StreetSerializer(serializers.ModelSerializer):
 
-    house = serializers.StringRelatedField(many=True, read_only=True)
+    houses = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Street
@@ -62,7 +62,7 @@ class StreetSerializer(serializers.ModelSerializer):
 
 class HouseSerializer(serializers.ModelSerializer):
 
-    apartment = serializers.StringRelatedField(many=True, read_only=True)
+    apartments = serializers.StringRelatedField(many=True, read_only=True)
     
     class Meta:
         model = House
@@ -80,7 +80,7 @@ class ApartmentSerializer(serializers.ModelSerializer):
 
 class DeviceSerializer(serializers.ModelSerializer):
 
-    meter = UUIDRelatedField(many=True, queryset=Meter.objects.all(), uuid_field='uuid_meter')
+    meter = UUIDRelatedField(many=True, queryset=Meter.objects.all(), uuid_field='uuid')
     
     class Meta:
         model = Device
@@ -94,4 +94,3 @@ class MeterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meter
         fields = "__all__"
-

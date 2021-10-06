@@ -27,14 +27,14 @@ class CityListGV(generics.ListCreateAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['name', 'description', 'address', 'owner', 'uuid_city']
+    filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
 
 
 class CityDetailGV(generics.RetrieveUpdateAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
 
-    def post(self, request, *args, **kwargs):   
+    def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
             model = apps.get_model(app_label='core', model_name='city')
@@ -42,26 +42,28 @@ class CityDetailGV(generics.RetrieveUpdateAPIView):
             content_type = ContentType.objects.get_for_model(model)
             all_permissions = Permission.objects.filter(content_type=content_type)
 
-            # print (all_permissions)
+            print (all_permissions)
             for i in all_permissions:
                 owner.user_permissions.add(i)
+                owner.save()
             return HttpResponse('Success')
+            #return HttpResponse(owner.save())
 
-        return super().post(request, *args, **kwargs)
+        return super().patch(request, *args, **kwargs)
 
 
 class DistrictListGV(generics.ListCreateAPIView):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['name', 'description', 'address', 'owner', 'uuid_district']
+    filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
 
 
 class DistrictDetailGV(generics.RetrieveUpdateAPIView):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
 
-    def post(self, request, *args, **kwargs):   
+    def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
             model = apps.get_model(app_label='core', model_name='district')
@@ -74,21 +76,21 @@ class DistrictDetailGV(generics.RetrieveUpdateAPIView):
                 owner.user_permissions.add(i)
             return HttpResponse('Success')
 
-        return super().post(request, *args, **kwargs)
+        return super().patch(request, *args, **kwargs)
 
 
 class StreetListGV(generics.ListCreateAPIView):
     queryset = Street.objects.all()
     serializer_class = StreetSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['name', 'description', 'address', 'owner', 'uuid_street']
+    filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
 
 
 class StreetDetailGV(generics.RetrieveUpdateAPIView):
     queryset = Street.objects.all()
     serializer_class = StreetSerializer
 
-    def post(self, request, *args, **kwargs):   
+    def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
             model = apps.get_model(app_label='core', model_name='street')
@@ -101,21 +103,21 @@ class StreetDetailGV(generics.RetrieveUpdateAPIView):
                 owner.user_permissions.add(i)
             return HttpResponse('Success')
 
-        return super().post(request, *args, **kwargs)
+        return super().patch(request, *args, **kwargs)
 
 
 class HouseListGV(generics.ListCreateAPIView):
     queryset = House.objects.all()
     serializer_class = HouseSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['name', 'description', 'address', 'owner', 'uuid_house']
+    filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
 
 
 class HouseDetailGV(generics.RetrieveUpdateAPIView):
     queryset = House.objects.all()
     serializer_class = HouseSerializer
 
-    def post(self, request, *args, **kwargs):   
+    def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
             model = apps.get_model(app_label='core', model_name='house')
@@ -128,21 +130,21 @@ class HouseDetailGV(generics.RetrieveUpdateAPIView):
                 owner.user_permissions.add(i)
             return HttpResponse('Success')
 
-        return super().post(request, *args, **kwargs)
+        return super().patch(request, *args, **kwargs)
 
 
 class ApartmentListGV(generics.ListCreateAPIView):
     queryset = Apartment.objects.all()
     serializer_class = ApartmentSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['name', 'description', 'address', 'owner', 'uuid_apartment']
+    filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
 
 
 class ApartmentDetailGV(generics.RetrieveUpdateAPIView):
     queryset = Apartment.objects.all()
     serializer_class = ApartmentSerializer
 
-    def post(self, request, *args, **kwargs):   
+    def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
             model = apps.get_model(app_label='core', model_name='apartment')
@@ -155,14 +157,14 @@ class ApartmentDetailGV(generics.RetrieveUpdateAPIView):
                 owner.user_permissions.add(i)
             return HttpResponse('Success')
 
-        return super().post(request, *args, **kwargs)
+        return super().patch(request, *args, **kwargs)
 
 
 class DeviceListGV(generics.ListCreateAPIView):
     queryset = Device.objects.all()
     serializer_class = DeviceSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['dev_eui', 'owner', 'uuid_deviсe']
+    filterset_fields = ['dev_eui', 'owner', 'uuid']
 
     #period = Device.objects.filter(date__range=["2011-01-01", "2011-01-31"])
     def get_queryset(self):
@@ -180,7 +182,7 @@ class DeviceDetailGV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Device.objects.all()
     serializer_class = DeviceSerializer
 
-    def post(self, request, *args, **kwargs):   
+    def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
             model = apps.get_model(app_label='core', model_name='device')
@@ -193,21 +195,21 @@ class DeviceDetailGV(generics.RetrieveUpdateDestroyAPIView):
                 owner.user_permissions.add(i)
             return HttpResponse('Success')
 
-        return super().post(request, *args, **kwargs)
+        return super().patch(request, *args, **kwargs)
 
 
 class MeterListGV(generics.ListCreateAPIView):
     queryset = Meter.objects.all()
     serializer_class = MeterSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['serial_number', 'uuid_meter']
+    filterset_fields = ['serial_number', 'uuid']
 
 
 class MeterDetailGV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Meter.objects.all()
     serializer_class = MeterSerializer
 
-    def post(self, request, *args, **kwargs):   
+    def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
             model = apps.get_model(app_label='core', model_name='meter')
@@ -220,4 +222,4 @@ class MeterDetailGV(generics.RetrieveUpdateDestroyAPIView):
                 owner.user_permissions.add(i)
             return HttpResponse('Success')
 
-        return super().post(request, *args, **kwargs)  
+        return super().patch(request, *args, **kwargs)  
