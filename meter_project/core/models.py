@@ -54,7 +54,7 @@ class Device(models.Model):
     description = models.CharField(max_length=255)
     deviсe_type = models.CharField(max_length=30)
     owner = models.CharField(max_length=30)
-    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name="device")
+    apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name="devices")
 
     def __str__(self):
         return self.dev_eui
@@ -70,9 +70,13 @@ class Meter(models.Model):
     initial_value = models.FloatField(default = 0)
     # charfield format is used yet, then necessary to create class with few options of physical units which is used by company
     unit = models.CharField(max_length=20) 
-    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="meter")
+    device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="meters")
     # apartment = models.ForeignKey(Device, verbose_name = u'apartment', on_delete=models.CASCADE)
     # city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="district")
 
     def __str__(self):
         return self.unit
+
+class StatusCode(models.Model):
+    code = models.IntegerField()
+    time = models.DateTimeField(auto_now_add=True)

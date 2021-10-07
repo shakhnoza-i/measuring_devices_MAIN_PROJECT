@@ -24,10 +24,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         password = self.validated_data['password']
     
-        if Customer.objects.filter(email=self.validated_data['email']).exists():
+        if User.objects.filter(email=self.validated_data['email']).exists():
             raise serializers.ValidationError({'error':'Email already exists!'})
 
-        if Customer.objects.filter(username=self.validated_data['username']).exists():
+        if User.objects.filter(username=self.validated_data['username']).exists():
             raise serializers.ValidationError({'error':'Username already exists!'})
 
         account = Customer(email=self.validated_data['email'],username=self.validated_data['username'], 
@@ -36,3 +36,4 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account.save()
 
         return account
+   

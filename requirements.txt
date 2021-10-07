@@ -7,3 +7,10 @@ djangorestframework-simplejwt==4.8.0
 flake8==3.9.2
 pygdal==3.0.4.6 # gdal-config --version, install libgdal-dev, gdal, pygdal
 psycopg2==2.8.0  # to communicate between django and postgres
+celery
+redis
+certifi==2021.5.30
+charset-normalizer==2.0.6
+idna==3.2
+requests==2.26.0
+urllib3==1.26.7

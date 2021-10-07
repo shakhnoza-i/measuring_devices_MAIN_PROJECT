@@ -21,6 +21,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.apps import apps
 
 from accounts.models import Customer
+from django.http import FileResponse
+from rest_framework import viewsets, renderers
+from rest_framework.decorators import action
 
 
 class CityListGV(generics.ListCreateAPIView):
@@ -29,10 +32,10 @@ class CityListGV(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
 
-
 class CityDetailGV(generics.RetrieveUpdateAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
+
 
     def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
@@ -197,6 +200,35 @@ class DeviceDetailGV(generics.RetrieveUpdateDestroyAPIView):
 
         return super().patch(request, *args, **kwargs)
 
+
+class PassthroughRenderer(renderers.BaseRenderer):
+    """
+        Return data as-is. View should supply a Response.
+    """
+    media_type = 'text/csv'
+    format = 'csv'
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        return data
+
+
+class DeviceDetailDownloadGV(generics.RetrieveAPIView):
+    queryset = Device.objects.all()
+    serializer_class = DeviceSerializer
+    renderer_classes=(PassthroughRenderer,)
+
+    def download(self, *args, **kwargs):
+        instance = self.get_object()
+
+        # get an open file handle (I'm just using a file attached to the model for this example):
+        file_handle = instance.file.open()
+
+        # send file
+        response = FileResponse(file_handle, content_type='whatever')
+        response['Content-Length'] = instance.file.size
+        response['Content-Disposition'] = 'attachment; filename="%s"' % instance.file.name
+
+        return response
+    
 
 class MeterListGV(generics.ListCreateAPIView):
     queryset = Meter.objects.all()

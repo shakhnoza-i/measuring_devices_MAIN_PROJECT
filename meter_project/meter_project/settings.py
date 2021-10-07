@@ -141,6 +141,8 @@ REST_FRAMEWORK = {
     ],
 
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
+    #'DEFAULT_RENDERER_CLASSES': ['rest_framework_csv.renderers.CSVRenderer'],
 }
 
 
@@ -150,3 +152,16 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'accounts.Customer'
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
+CELERY_ACCEPT_CONTENT = ['application/json']  
+CELERY_TASK_SERIALIZER = 'json'  
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_BEAT_SCHEDULE = {
+      'add-every-60-seconds': {
+        'task': 'core.tasks.response',
+        'schedule': 60.0,
+    },
+}
