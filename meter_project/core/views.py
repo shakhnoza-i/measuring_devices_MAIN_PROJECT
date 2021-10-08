@@ -2,9 +2,9 @@ from __future__ import unicode_literals
 
 from django.http.response import HttpResponse
 from core.models import City, District, Street, House, Apartment, Device, Meter
-from core.serializers import (CitySerializer, DistrictSerializer, 
-                              StreetSerializer, HouseSerializer, ApartmentSerializer, 
-                              DeviceSerializer, MeterSerializer)
+from core.serializers import (CitySerializer, DistrictSerializer, StreetSerializer, 
+                              HouseSerializer, ApartmentSerializer, DeviceSerializer, 
+                              DeviceDateTimeRangeSerializer, MeterSerializer)
 
 from rest_framework import status, viewsets
 from rest_framework.response import Response
@@ -32,11 +32,26 @@ class CityListGV(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
 
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='district')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
+
+
 class CityDetailGV(generics.RetrieveUpdateAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
-
-
+    #transfer of full rights
     def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
@@ -61,11 +76,26 @@ class DistrictListGV(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
 
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='district')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
+
 
 class DistrictDetailGV(generics.RetrieveUpdateAPIView):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
-
+     #transfer of full rights
     def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
@@ -87,12 +117,26 @@ class StreetListGV(generics.ListCreateAPIView):
     serializer_class = StreetSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='district')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
 
 
 class StreetDetailGV(generics.RetrieveUpdateAPIView):
     queryset = Street.objects.all()
     serializer_class = StreetSerializer
-
+    #transfer of full rights
     def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
@@ -114,12 +158,26 @@ class HouseListGV(generics.ListCreateAPIView):
     serializer_class = HouseSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='district')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
 
 
 class HouseDetailGV(generics.RetrieveUpdateAPIView):
     queryset = House.objects.all()
     serializer_class = HouseSerializer
-
+    #transfer of full rights
     def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
@@ -141,12 +199,26 @@ class ApartmentListGV(generics.ListCreateAPIView):
     serializer_class = ApartmentSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='district')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
 
 
 class ApartmentDetailGV(generics.RetrieveUpdateAPIView):
     queryset = Apartment.objects.all()
     serializer_class = ApartmentSerializer
-
+    #transfer of full rights
     def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
@@ -168,12 +240,33 @@ class DeviceListGV(generics.ListCreateAPIView):
     serializer_class = DeviceSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['dev_eui', 'owner', 'uuid']
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='district')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
+
+
+class DeviceDateTimeRangeGV(generics.ListAPIView):
+    queryset = Device.objects.all()
+    serializer_class = DeviceDateTimeRangeSerializer
 
     #period = Device.objects.filter(date__range=["2011-01-01", "2011-01-31"])
+    #spelling datetimefield apifilter url for range in right way - for manual testing
+    #"last_action_time": "2021-10-07T05:30:18.149518Z", 
+    #"last_action_time": "2021-10-07T09:09:13.052288Z"
     def get_queryset(self):
         start_date = models.DateTimeField()
         end_date = models.DateTimeField()
-        #books = Device.objects.filter(last_action_time=(start_date, end_date))
         queryset = Device.objects.all()
         last_action_time = self.request.query_params.get('last_action_time')
         if last_action_time is not None:
@@ -184,7 +277,7 @@ class DeviceListGV(generics.ListCreateAPIView):
 class DeviceDetailGV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Device.objects.all()
     serializer_class = DeviceSerializer
-
+    #transfer of full rights
     def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))
@@ -235,12 +328,26 @@ class MeterListGV(generics.ListCreateAPIView):
     serializer_class = MeterSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['serial_number', 'uuid']
+    def post(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='district')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().post(request, *args, **kwargs)
 
 
 class MeterDetailGV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Meter.objects.all()
     serializer_class = MeterSerializer
-
+    #transfer of full rights
     def patch(self, request, *args, **kwargs):   
         if request.query_params.get('owner') is not None:
             owner = Customer.objects.get(username=request.query_params.get('owner'))

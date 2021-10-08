@@ -1,7 +1,7 @@
 from django.urls import path, include
 from core.views import (CityListGV, CityDetailGV, DistrictListGV, DistrictDetailGV,
                         StreetListGV, StreetDetailGV, HouseListGV, HouseDetailGV,
-                        ApartmentListGV, ApartmentDetailGV, DeviceListGV,
+                        ApartmentListGV, ApartmentDetailGV, DeviceListGV, DeviceDateTimeRangeGV,
                         DeviceDetailGV, DeviceDetailDownloadGV, MeterListGV, MeterDetailGV)
 
 
@@ -22,6 +22,7 @@ urlpatterns = [
     path('apartment/<int:pk>/',  ApartmentDetailGV.as_view(), name='apartment-details'),
 
     path('device/',  DeviceListGV.as_view(), name='device-list'),
+    path('device/date_time_range/',  DeviceDateTimeRangeGV.as_view(), name='device-date-time-range'),
     path('device/<int:pk>/',  DeviceDetailGV.as_view(), name='device-details'),
     path('device/<int:pk>/download/',  DeviceDetailDownloadGV.as_view(), name='device-details-download'),
     

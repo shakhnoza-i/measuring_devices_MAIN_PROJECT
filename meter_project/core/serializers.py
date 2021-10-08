@@ -32,65 +32,83 @@ class UUIDRelatedField(RelatedField):
         return getattr(obj, self.uuid_field)
 
 
-class CitySerializer(serializers.ModelSerializer):
 
-    districts = serializers.StringRelatedField(many=True, read_only=True)
+class MeterSerializer(serializers.ModelSerializer):   
 
     class Meta:
-        depth = 2
-        model = City
+        model = Meter
         fields = "__all__"
 
 
-class DistrictSerializer(serializers.ModelSerializer):
-
-    streets = serializers.StringRelatedField(many=True, read_only=True)
+class MeterValueSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = District
-        fields = "__all__"
-
-
-class StreetSerializer(serializers.ModelSerializer):
-
-    houses = serializers.StringRelatedField(many=True, read_only=True)
-
-    class Meta:
-        model = Street
-        fields = "__all__"
-
-
-class HouseSerializer(serializers.ModelSerializer):
-
-    apartments = serializers.StringRelatedField(many=True, read_only=True)
-    
-    class Meta:
-        model = House
-        fields = "__all__"
-
-
-class ApartmentSerializer(serializers.ModelSerializer):
-
-    device = serializers.StringRelatedField(many=True, read_only=True)
-    
-    class Meta:
-        model = Apartment
-        fields = "__all__"
+        model = Meter
+        fields = ['uuid', 'initial_value', 'unit']
 
 
 class DeviceSerializer(serializers.ModelSerializer):
 
-    meter = UUIDRelatedField(many=True, queryset=Meter.objects.all(), uuid_field='uuid')
+    meters = UUIDRelatedField(many=True, queryset=Meter.objects.all(), uuid_field='uuid')
     
     class Meta:
         model = Device
         fields = "__all__"
 
 
-class MeterSerializer(serializers.ModelSerializer):
+class DeviceDateTimeRangeSerializer(serializers.ModelSerializer):
 
-    #apartment = serializers.CharField(source='apartment.name')
+    meters = MeterValueSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Device
+        fields = "__all__"
+
+
+class ApartmentSerializer(serializers.ModelSerializer):
+    devices = DeviceSerializer(many=True, read_only=True)
     
     class Meta:
-        model = Meter
+        model = Apartment
+        fields = '__all__'
+
+
+
+class HouseSerializer(serializers.ModelSerializer):
+
+    apartments = ApartmentSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = House
         fields = "__all__"
+
+
+
+class StreetSerializer(serializers.ModelSerializer):
+
+    houses = HouseSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Street
+        fields = "__all__"
+
+
+
+class DistrictSerializer(serializers.ModelSerializer):
+
+    streets = StreetSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = District
+        fields = "__all__"
+
+
+
+class CitySerializer(serializers.ModelSerializer):
+
+    districts = DistrictSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = City
+        fields = "__all__"
+

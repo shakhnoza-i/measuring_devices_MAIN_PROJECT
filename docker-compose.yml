@@ -27,7 +27,7 @@ services:
   
   celery:
     build: .
-    # command: tail -F anything
+    #command: tail -F anything
     command: celery -A meter_project beat 
     volumes:
       - .:/usr/src/app

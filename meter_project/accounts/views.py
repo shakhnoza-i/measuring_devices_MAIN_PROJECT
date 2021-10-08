@@ -1,15 +1,19 @@
 from rest_framework import serializers
 from rest_framework.response import Response
+from django.http.response import HttpResponse
 from rest_framework.authtoken.models import Token
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework import generics
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from .models import Customer
+from django_filters.rest_framework import DjangoFilterBackend
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
+from django.apps import apps
 
-from accounts.serializers import RegistrationSerializer
+from .models import Customer
+from .serializers import RegistrationSerializer, CustomerSerializer
 
 
 @api_view(['POST'])
@@ -60,5 +64,27 @@ class SearchUserView(generics.ListAPIView):
     
     queryset = Customer.objects.all()
     serializer_class = RegistrationSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['username', 'email']
+    # filter_backends = [filters.SearchFilter]
+    # search_fields = ['username', 'email']
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['username', 'email']
+
+
+class CustomerDetailGV(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+
+    def patch(self, request, *args, **kwargs):   
+        if request.query_params.get('owner') is not None:
+            owner = Customer.objects.get(username=request.query_params.get('owner'))
+            model = apps.get_model(app_label='core', model_name='meter')
+
+            content_type = ContentType.objects.get_for_model(model)
+            all_permissions = Permission.objects.filter(content_type=content_type)
+
+            # print (all_permissions)
+            for i in all_permissions:
+                owner.user_permissions.add(i)
+            return HttpResponse('Success')
+
+        return super().patch(request, *args, **kwargs)  

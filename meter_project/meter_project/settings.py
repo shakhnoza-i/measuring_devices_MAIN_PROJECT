@@ -160,7 +160,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY_BEAT_SCHEDULE = {
-      'add-every-60-seconds': {
+      'response': {
         'task': 'core.tasks.response',
         'schedule': 60.0,
     },

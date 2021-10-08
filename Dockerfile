@@ -42,3 +42,7 @@ COPY ./meter_project /meter_project
 RUN adduser --no-create-home user
 # switch docker to this user
 USER user
+
+# RUN chown nobody:nogroup "celerybeat-schedule"
+# USER nobody
+# CMD ["celery", "-A", "meter_project.celery_app", "-E", "-B"]

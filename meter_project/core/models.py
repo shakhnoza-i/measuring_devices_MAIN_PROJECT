@@ -28,6 +28,7 @@ class Node(models.Model):
 class City(Node):
     pass
 
+
 class District(Node):
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="districts")
 
@@ -42,7 +43,6 @@ class House(Node):
 
 class Apartment(Node):
     house = models.ForeignKey(House, on_delete=models.CASCADE, related_name="apartments")
-
 
 
 class Device(models.Model):
@@ -76,6 +76,7 @@ class Meter(models.Model):
 
     def __str__(self):
         return self.unit
+
 
 class StatusCode(models.Model):
     code = models.IntegerField()
