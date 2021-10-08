@@ -262,9 +262,6 @@ class DeviceDateTimeRangeGV(generics.ListAPIView):
     serializer_class = DeviceDateTimeRangeSerializer
 
     #period = Device.objects.filter(date__range=["2011-01-01", "2011-01-31"])
-    #spelling datetimefield apifilter url for range in right way - for manual testing
-    #"last_action_time": "2021-10-07T05:30:18.149518Z", 
-    #"last_action_time": "2021-10-07T09:09:13.052288Z"
     def get_queryset(self):
         start_date = datetime()
         end_date = datetime()
