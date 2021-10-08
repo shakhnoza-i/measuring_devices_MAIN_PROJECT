@@ -24,6 +24,7 @@ from accounts.models import Customer
 from django.http import FileResponse
 from rest_framework import viewsets, renderers
 from rest_framework.decorators import action
+import datetime
 
 
 class CityListGV(generics.ListCreateAPIView):
@@ -265,12 +266,12 @@ class DeviceDateTimeRangeGV(generics.ListAPIView):
     #"last_action_time": "2021-10-07T05:30:18.149518Z", 
     #"last_action_time": "2021-10-07T09:09:13.052288Z"
     def get_queryset(self):
-        start_date = models.DateTimeField()
-        end_date = models.DateTimeField()
+        start_date = datetime()
+        end_date = datetime()
         queryset = Device.objects.all()
         last_action_time = self.request.query_params.get('last_action_time')
         if last_action_time is not None:
-            queryset = queryset.filter(last_action_time=(start_date, end_date))
+            queryset = queryset.filter(last_action_time=[start_date, end_date])
         return queryset
 
 

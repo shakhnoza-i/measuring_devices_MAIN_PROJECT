@@ -1,5 +1,5 @@
 from django.contrib import admin
-from core.models import City, District, Street, House, Apartment, Device, Meter
+from core.models import City, District, Street, House, Apartment, Device, Meter, StatusCode
 
 admin.site.register(City)
 admin.site.register(District)
@@ -8,3 +8,4 @@ admin.site.register(House)
 admin.site.register(Apartment)
 admin.site.register(Device)
 admin.site.register(Meter)
+admin.site.register(StatusCode)
