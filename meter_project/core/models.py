@@ -8,7 +8,7 @@ from django.contrib .auth.models import User
 from django.contrib.gis.db.models import PointField
 from uuid import UUID, uuid4
 from django.contrib.auth.models import User
-
+from accounts.models import Customer
 
 
 class Node(models.Model):   
@@ -16,7 +16,7 @@ class Node(models.Model):
     geo = PointField()
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=255, blank=True)
-    owner = models.CharField(max_length=30, blank=True)
+    owner = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True)
     address = models.TextField(max_length=150)
 
     class Meta:
@@ -24,6 +24,7 @@ class Node(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class City(Node):
     pass
@@ -53,7 +54,7 @@ class Device(models.Model):
     active = models.BooleanField(default=False)
     description = models.CharField(max_length=255)
     deviсe_type = models.CharField(max_length=30)
-    owner = models.CharField(max_length=30)
+    owner = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True)
     apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name="devices")
 
     def __str__(self):
@@ -70,6 +71,7 @@ class Meter(models.Model):
     initial_value = models.FloatField(default = 0)
     # charfield format is used yet, then necessary to create class with few options of physical units which is used by company
     unit = models.CharField(max_length=20) 
+    owner = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True)
     device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="meters")
     # apartment = models.ForeignKey(Device, verbose_name = u'apartment', on_delete=models.CASCADE)
     # city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="district")

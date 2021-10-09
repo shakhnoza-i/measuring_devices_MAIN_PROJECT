@@ -37,14 +37,14 @@ class MeterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meter
-        fields = "__all__"
+        exclude =['owner',]
 
 
 class MeterValueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meter
-        fields = ['uuid', 'initial_value', 'unit']
+        fields = ['uuid', 'initial_value', 'unit',]
 
 
 class DeviceSerializer(serializers.ModelSerializer):
@@ -73,7 +73,6 @@ class ApartmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class HouseSerializer(serializers.ModelSerializer):
 
     apartments = ApartmentSerializer(many=True, read_only=True)
@@ -81,7 +80,6 @@ class HouseSerializer(serializers.ModelSerializer):
     class Meta:
         model = House
         fields = "__all__"
-
 
 
 class StreetSerializer(serializers.ModelSerializer):
@@ -93,7 +91,6 @@ class StreetSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-
 class DistrictSerializer(serializers.ModelSerializer):
 
     streets = StreetSerializer(many=True, read_only=True)
@@ -103,7 +100,6 @@ class DistrictSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-
 class CitySerializer(serializers.ModelSerializer):
 
     districts = DistrictSerializer(many=True, read_only=True)
@@ -111,4 +107,3 @@ class CitySerializer(serializers.ModelSerializer):
     class Meta:
         model = City
         fields = "__all__"
-
