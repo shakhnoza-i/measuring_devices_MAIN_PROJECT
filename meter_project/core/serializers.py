@@ -37,7 +37,7 @@ class MeterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meter
-        exclude =['owner',]
+        fields = "__all__"
 
 
 class MeterValueSerializer(serializers.ModelSerializer):
@@ -66,7 +66,7 @@ class DeviceDateTimeRangeSerializer(serializers.ModelSerializer):
 
 
 class ApartmentSerializer(serializers.ModelSerializer):
-    devices = DeviceSerializer(many=True, read_only=True)
+    devices = DeviceSerializer(many=True, read_only=True) #add related(selected) field 
     
     class Meta:
         model = Apartment

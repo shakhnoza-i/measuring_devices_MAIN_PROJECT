@@ -63,9 +63,9 @@ def registration_view(request, *args, **kwargs):
 class SearchUserView(generics.ListAPIView):
     
     queryset = Customer.objects.all()
-    serializer_class = RegistrationSerializer
+    serializer_class = CustomerSerializer
     # filter_backends = [filters.SearchFilter]
-    # search_fields = ['username', 'email']
+    # search_fields = ['^username', '^email']
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['username', 'email']
 
@@ -74,17 +74,3 @@ class CustomerDetailGV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
 
-    def patch(self, request, *args, **kwargs):   
-        if request.query_params.get('owner') is not None:
-            owner = Customer.objects.get(username=request.query_params.get('owner'))
-            model = apps.get_model(app_label='core', model_name='meter')
-
-            content_type = ContentType.objects.get_for_model(model)
-            all_permissions = Permission.objects.filter(content_type=content_type)
-
-            # print (all_permissions)
-            for i in all_permissions:
-                owner.user_permissions.add(i)
-            return HttpResponse('Success')
-
-        return super().patch(request, *args, **kwargs)  

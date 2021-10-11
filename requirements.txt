@@ -2,6 +2,7 @@ Django==3.2.7
 djangorestframework==3.12.4
 djangorestframework-gis==0.17 # djangorestframework-gis --version
 django-filter==2.4.0 # only in generic classes
+PyJWT==2.1.0
 djangorestframework-simplejwt==4.8.0
 #dry-rest-permissions==0.1.10
 flake8==3.9.2
