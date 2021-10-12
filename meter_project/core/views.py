@@ -32,9 +32,9 @@ class CityListGV(generics.ListCreateAPIView):
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        username = self.request.query_params.get('username')
-        return City.objects.filter(owner__username=username)
+    # def get_queryset(self):
+    #     username = self.request.query_params.get('username')
+    #     return City.objects.filter(owner__username=username)
 
 
 class CityDetailGV(generics.RetrieveUpdateAPIView):
@@ -42,6 +42,18 @@ class CityDetailGV(generics.RetrieveUpdateAPIView):
     serializer_class = CitySerializer
     #transfer of full rights
     permission_classes = [IsCustomer]
+
+    # def grant_permissions(self, request, *args, **kwargs):
+    #     pk = self.kwargs.get('pk')
+    #     city = City.objects.get(pk=pk)
+    #     if request.query_params.get('full_owner') is not None:
+    #         new_full_owner = Customer.objects.get(username=request.query_params.get('full_owner'))
+    #         city.full_owner = city.full_owner.add(new_full_owner)
+    #         city.save()
+    #     elif request.query_params.get('part_owner') is not None:
+    #         new_part_owner = Customer.objects.get(username=request.query_params.get('part_owner'))
+    #         city.part_owner = city.part_owner.add(new_part_owner)
+    #         city.save()
 
 
 class DistrictListGV(generics.ListCreateAPIView):

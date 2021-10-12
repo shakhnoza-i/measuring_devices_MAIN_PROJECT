@@ -28,11 +28,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_gis',
     'django.contrib.gis',
     'django_filters',
+    'guardian',
     # 'dry_rest_permissions',
     'rest_framework_simplejwt',
 
@@ -152,6 +154,11 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'accounts.Customer'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    'guardian.backends.ObjectPermissionBackend',
+)
 
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")

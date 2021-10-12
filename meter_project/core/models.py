@@ -6,6 +6,7 @@ from django.db import models
 from django.core import validators
 from django.contrib .auth.models import User
 from django.contrib.gis.db.models import PointField
+from django.contrib.postgres.fields import ArrayField
 from uuid import UUID, uuid4
 from django.contrib.auth.models import User
 from accounts.models import Customer
@@ -16,9 +17,10 @@ class Node(models.Model):
     geo = PointField()
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=255, blank=True)
-    owner = models.ManyToManyField(Customer, blank=True)
+    owner = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True, null=True, default=None)
     address = models.TextField(max_length=150)
-    #добавить поле (из query_params будут соби )
+    #full_owner =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=None)
+    #part_owner =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=None)
 
     class Meta:
         abstract = True
@@ -55,7 +57,7 @@ class Device(models.Model):
     active = models.BooleanField(default=True)
     description = models.CharField(max_length=255)
     deviсe_type = models.CharField(max_length=30)
-    owner = models.ManyToManyField(Customer, blank=True)
+    owner = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True, default=None)
     apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name="devices")
 
     def __str__(self):
@@ -70,12 +72,9 @@ class Meter(models.Model):
     activation_time = models.DateTimeField(auto_now_add=True)
     first_action_time = models.DateTimeField(auto_now_add=True)
     initial_value = models.FloatField(default = 0)
-    # charfield format is used yet, then necessary to create class with few options of physical units which is used by company
     unit = models.CharField(max_length=20) 
-    owner = models.ManyToManyField(Customer, blank=True)
+    owner = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True,  default=None)
     device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="meters")
-    # apartment = models.ForeignKey(Device, verbose_name = u'apartment', on_delete=models.CASCADE)
-    # city = models.ForeignKey(City, on_delete=models.CASCADE, related_name="district")
 
     def __str__(self):
         return self.unit
