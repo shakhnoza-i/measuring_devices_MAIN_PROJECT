@@ -19,8 +19,10 @@ class Node(models.Model):
     description = models.CharField(max_length=255, blank=True)
     owner = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True, null=True, default=None)
     address = models.TextField(max_length=150)
-    #full_owner =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=None)
-    #part_owner =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=None)
+    full_owner =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=list)
+    part_owner =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=list)
+    full_owner_link =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=list)
+    part_owner_link =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=list)
 
     class Meta:
         abstract = True

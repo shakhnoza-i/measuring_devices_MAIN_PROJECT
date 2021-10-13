@@ -43,17 +43,22 @@ class CityDetailGV(generics.RetrieveUpdateAPIView):
     #transfer of full rights
     permission_classes = [IsCustomer]
 
-    # def grant_permissions(self, request, *args, **kwargs):
-    #     pk = self.kwargs.get('pk')
-    #     city = City.objects.get(pk=pk)
-    #     if request.query_params.get('full_owner') is not None:
-    #         new_full_owner = Customer.objects.get(username=request.query_params.get('full_owner'))
-    #         city.full_owner = city.full_owner.add(new_full_owner)
-    #         city.save()
-    #     elif request.query_params.get('part_owner') is not None:
-    #         new_part_owner = Customer.objects.get(username=request.query_params.get('part_owner'))
-    #         city.part_owner = city.part_owner.add(new_part_owner)
-    #         city.save()
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        city = City.objects.get(pk=pk)
+        #owner_link = city.owner_link.all()
+        if request.query_params.get('full_owner') is not None:
+            add_full_owner = Customer.objects.get(username=request.query_params.get('full_owner'))
+            #a = new_full_owner + request.user.username
+            city.full_owner = city.full_owner.append(add_full_owner)
+            #city.owner_link = city.owner_link.add(a)
+            city.save()
+            return HttpResponse(city, status=status.HTTP_200_OK)
+        elif request.query_params.get('part_owner') is not None:
+            add_part_owner = Customer.objects.get(username=request.query_params.get('part_owner'))
+            city.part_owner = city.part_owner.append(add_part_owner)
+            city.save()
+            return HttpResponse(city, status=status.HTTP_200_OK)
 
 
 class DistrictListGV(generics.ListCreateAPIView):
