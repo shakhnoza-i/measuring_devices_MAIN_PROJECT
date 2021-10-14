@@ -15,14 +15,14 @@ from accounts.models import Customer
 class Node(models.Model):   
     uuid = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
     geo = PointField()
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, default = None)
     description = models.CharField(max_length=255, blank=True)
     owner = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True, null=True, default=None)
-    address = models.TextField(max_length=150)
-    full_owner =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=list)
-    part_owner =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=list)
-    full_owner_link =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=list)
-    part_owner_link =  ArrayField(models.CharField(max_length=30, blank=True), blank=True, default=list)
+    address = models.TextField(max_length=150, default = None)
+    full_owner =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
+    part_owner =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
+    full_owner_link =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
+    part_owner_link =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
 
     class Meta:
         abstract = True
@@ -53,14 +53,18 @@ class Apartment(Node):
 
 class Device(models.Model):
     uuid = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
-    dev_eui = models.CharField(validators=[validators.MinLengthValidator(16)], max_length=16)
+    dev_eui = models.CharField(validators=[validators.MinLengthValidator(16)], max_length=16, default = 0000000000000000)
     activation_time = models.DateTimeField(auto_now_add=True)
     last_action_time = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
-    description = models.CharField(max_length=255)
-    deviсe_type = models.CharField(max_length=30)
+    description = models.CharField(max_length=255, default = None)
+    deviсe_type = models.CharField(max_length=30, default = None)
     owner = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True, default=None)
     apartment = models.ForeignKey(Apartment, on_delete=models.CASCADE, related_name="devices")
+    full_owner =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
+    part_owner =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
+    full_owner_link =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
+    part_owner_link =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
 
     def __str__(self):
         return self.dev_eui
@@ -69,14 +73,18 @@ class Device(models.Model):
 class Meter(models.Model):
     
     uuid = models.UUIDField(unique=True, default=uuid4, editable=False, db_index=True)
-    serial_number = models.IntegerField()
+    serial_number = models.IntegerField(default = 0)
     active = models.BooleanField(default=True)
     activation_time = models.DateTimeField(auto_now_add=True)
     first_action_time = models.DateTimeField(auto_now_add=True)
     initial_value = models.FloatField(default = 0)
-    unit = models.CharField(max_length=20) 
+    unit = models.CharField(max_length=20, default = None) 
     owner = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True,  default=None)
     device = models.ForeignKey(Device, on_delete=models.CASCADE, related_name="meters")
+    full_owner =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
+    part_owner =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
+    full_owner_link =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
+    part_owner_link =  ArrayField(models.CharField(max_length=30, blank=True, null=True), blank=True, default=list)
 
     def __str__(self):
         return self.unit

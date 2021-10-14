@@ -22,7 +22,10 @@ from core.permissions import IsCustomer
 from core.models import Node, City, District, Street, House, Apartment, Device, Meter
 from core.serializers import (CitySerializer, DistrictSerializer, StreetSerializer, 
                               HouseSerializer, ApartmentSerializer, DeviceSerializer, 
-                              DeviceDateTimeRangeSerializer, MeterSerializer)
+                              DeviceDateTimeRangeSerializer, MeterSerializer, 
+                              MeterUUIDSerializer, DeviceUUIDSerializer, ApartmentUUIDSerializer, 
+                              HouseUUIDSerializer, StreetUUIDSerializer, DistrictUUIDSerializer,
+                              CityUUIDSerializer)
 
 
 class CityListGV(generics.ListCreateAPIView):
@@ -32,9 +35,9 @@ class CityListGV(generics.ListCreateAPIView):
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
     permission_classes = [IsAuthenticated]
 
-    # def get_queryset(self):
-    #     username = self.request.query_params.get('username')
-    #     return City.objects.filter(owner__username=username)
+    def get_queryset(self):
+        username = self.request.user.username
+        return City.objects.filter(owner__username=username)
 
 
 class CityDetailGV(generics.RetrieveUpdateAPIView):
@@ -48,16 +51,47 @@ class CityDetailGV(generics.RetrieveUpdateAPIView):
         city = City.objects.get(pk=pk)
         #owner_link = city.owner_link.all()
         if request.query_params.get('full_owner') is not None:
-            add_full_owner = Customer.objects.get(username=request.query_params.get('full_owner'))
-            #a = new_full_owner + request.user.username
-            city.full_owner = city.full_owner.append(add_full_owner)
-            #city.owner_link = city.owner_link.add(a)
+            new_full_owner = Customer.objects.get(username=request.query_params.get('full_owner'))
+            a = str(new_full_owner) + request.user.username
+            city.full_owner.append(new_full_owner)
+            city.full_owner_link.append(a)
             city.save()
-            return HttpResponse(city, status=status.HTTP_200_OK)
+            return HttpResponse("You've added the full access for this user", status=status.HTTP_200_OK)
         elif request.query_params.get('part_owner') is not None:
-            add_part_owner = Customer.objects.get(username=request.query_params.get('part_owner'))
-            city.part_owner = city.part_owner.append(add_part_owner)
+            new_part_owner = Customer.objects.get(username=request.query_params.get('part_owner'))
+            b = str(new_part_owner) + request.user.username
+            city.part_owner.append(new_part_owner)
+            city.part_owner_link.append(b)
             city.save()
+            return HttpResponse("You've added the part access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_full_owner') is not None:
+            remove_full_owner = Customer.objects.get(username=request.query_params.get('remove_full_owner'))
+            a = str(remove_full_owner) + request.user.username
+            full_owner_links=city.full_owner_link
+            if full_owner_links is not None:
+                for i in full_owner_links:
+                    if i == a:
+                        city.full_owner.remove(str(remove_full_owner))
+                        #city.full_owner.remove(remove_full_owner)
+                        city.full_owner_link.remove(a)
+                        city.save()
+                        return HttpResponse("You've removed the full access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_part_owner') is not None:
+            remove_part_owner = Customer.objects.get(username=request.query_params.get('remove_part_owner'))
+            a = str(remove_part_owner) + request.user.username
+            part_owner_links=city.part_owner_link
+            if part_owner_links is not None:
+                for i in part_owner_links:
+                    if i == a:
+                        city.part_owner.remove(str(remove_part_owner))
+                        city.part_owner_link.remove(a)
+                        city.save()
+                        return HttpResponse("You've removed the part access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the part access for this user", status=status.HTTP_200_OK)
+        else:
             return HttpResponse(city, status=status.HTTP_200_OK)
 
 
@@ -68,11 +102,63 @@ class DistrictListGV(generics.ListCreateAPIView):
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        username = self.request.user.username
+        return District.objects.filter(owner__username=username)
+
 
 class DistrictDetailGV(generics.RetrieveUpdateAPIView):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
     permission_classes = [IsCustomer]
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        node = District.objects.get(pk=pk)
+        #owner_link = city.owner_link.all()
+        if request.query_params.get('full_owner') is not None:
+            new_full_owner = Customer.objects.get(username=request.query_params.get('full_owner'))
+            a = str(new_full_owner) + request.user.username
+            node.full_owner.append(new_full_owner)
+            node.full_owner_link.append(a)
+            node.save()
+            return HttpResponse("You've added the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('part_owner') is not None:
+            new_part_owner = Customer.objects.get(username=request.query_params.get('part_owner'))
+            b = str(new_part_owner) + request.user.username
+            node.part_owner.append(new_part_owner)
+            node.part_owner_link.append(b)
+            node.save()
+            return HttpResponse("You've added the part access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_full_owner') is not None:
+            remove_full_owner = Customer.objects.get(username=request.query_params.get('remove_full_owner'))
+            a = str(remove_full_owner) + request.user.username
+            full_owner_links=node.full_owner_link
+            if full_owner_links is not None:
+                for i in full_owner_links:
+                    if i == a:
+                        node.full_owner.remove(str(remove_full_owner))
+                        #city.full_owner.remove(remove_full_owner)
+                        node.full_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the full access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_part_owner') is not None:
+            remove_part_owner = Customer.objects.get(username=request.query_params.get('remove_part_owner'))
+            a = str(remove_part_owner) + request.user.username
+            part_owner_links=node.part_owner_link
+            if part_owner_links is not None:
+                for i in part_owner_links:
+                    if i == a:
+                        node.part_owner.remove(str(remove_part_owner))
+                        node.part_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the part access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the part access for this user", status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(node, status=status.HTTP_200_OK)
 
 
 class StreetListGV(generics.ListCreateAPIView):
@@ -82,11 +168,64 @@ class StreetListGV(generics.ListCreateAPIView):
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        username = self.request.user.username
+        return Street.objects.filter(owner__username=username)
+
 
 class StreetDetailGV(generics.RetrieveUpdateAPIView):
     queryset = Street.objects.all()
     serializer_class = StreetSerializer
     permission_classes = [IsCustomer]
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        node = Street.objects.get(pk=pk)
+        #owner_link = city.owner_link.all()
+        if request.query_params.get('full_owner') is not None:
+            new_full_owner = Customer.objects.get(username=request.query_params.get('full_owner'))
+            a = str(new_full_owner) + request.user.username
+            node.full_owner.append(new_full_owner)
+            node.full_owner_link.append(a)
+            node.save()
+            return HttpResponse("You've added the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('part_owner') is not None:
+            new_part_owner = Customer.objects.get(username=request.query_params.get('part_owner'))
+            b = str(new_part_owner) + request.user.username
+            node.part_owner.append(new_part_owner)
+            node.part_owner_link.append(b)
+            node.save()
+            return HttpResponse("You've added the part access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_full_owner') is not None:
+            remove_full_owner = Customer.objects.get(username=request.query_params.get('remove_full_owner'))
+            a = str(remove_full_owner) + request.user.username
+            full_owner_links=node.full_owner_link
+            if full_owner_links is not None:
+                for i in full_owner_links:
+                    if i == a:
+                        node.full_owner.remove(str(remove_full_owner))
+                        #city.full_owner.remove(remove_full_owner)
+                        node.full_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the full access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_part_owner') is not None:
+            remove_part_owner = Customer.objects.get(username=request.query_params.get('remove_part_owner'))
+            a = str(remove_part_owner) + request.user.username
+            part_owner_links=node.part_owner_link
+            if part_owner_links is not None:
+                for i in part_owner_links:
+                    if i == a:
+                        node.part_owner.remove(str(remove_part_owner))
+                        node.part_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the part access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the part access for this user", status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(node, status=status.HTTP_200_OK)
+
 
 
 class HouseListGV(generics.ListCreateAPIView):
@@ -96,11 +235,64 @@ class HouseListGV(generics.ListCreateAPIView):
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        username = self.request.user.username
+        return House.objects.filter(owner__username=username)
+
 
 class HouseDetailGV(generics.RetrieveUpdateAPIView):
     queryset = House.objects.all()
     serializer_class = HouseSerializer
     permission_classes = [IsCustomer]
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        node = House.objects.get(pk=pk)
+        #owner_link = city.owner_link.all()
+        if request.query_params.get('full_owner') is not None:
+            new_full_owner = Customer.objects.get(username=request.query_params.get('full_owner'))
+            a = str(new_full_owner) + request.user.username
+            node.full_owner.append(new_full_owner)
+            node.full_owner_link.append(a)
+            node.save()
+            return HttpResponse("You've added the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('part_owner') is not None:
+            new_part_owner = Customer.objects.get(username=request.query_params.get('part_owner'))
+            b = str(new_part_owner) + request.user.username
+            node.part_owner.append(new_part_owner)
+            node.part_owner_link.append(b)
+            node.save()
+            return HttpResponse("You've added the part access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_full_owner') is not None:
+            remove_full_owner = Customer.objects.get(username=request.query_params.get('remove_full_owner'))
+            a = str(remove_full_owner) + request.user.username
+            full_owner_links=node.full_owner_link
+            if full_owner_links is not None:
+                for i in full_owner_links:
+                    if i == a:
+                        node.full_owner.remove(str(remove_full_owner))
+                        #city.full_owner.remove(remove_full_owner)
+                        node.full_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the full access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_part_owner') is not None:
+            remove_part_owner = Customer.objects.get(username=request.query_params.get('remove_part_owner'))
+            a = str(remove_part_owner) + request.user.username
+            part_owner_links=node.part_owner_link
+            if part_owner_links is not None:
+                for i in part_owner_links:
+                    if i == a:
+                        node.part_owner.remove(str(remove_part_owner))
+                        node.part_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the part access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the part access for this user", status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(node, status=status.HTTP_200_OK)
+
 
 
 class ApartmentListGV(generics.ListCreateAPIView):
@@ -110,11 +302,64 @@ class ApartmentListGV(generics.ListCreateAPIView):
     filterset_fields = ['name', 'description', 'address', 'owner', 'uuid']
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        username = self.request.user.username
+        return Apartment.objects.filter(owner__username=username)
+
 
 class ApartmentDetailGV(generics.RetrieveUpdateAPIView):
     queryset = Apartment.objects.all()
     serializer_class = ApartmentSerializer
     permission_classes = [IsCustomer]
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        node = Apartment.objects.get(pk=pk)
+        #owner_link = city.owner_link.all()
+        if request.query_params.get('full_owner') is not None:
+            new_full_owner = Customer.objects.get(username=request.query_params.get('full_owner'))
+            a = str(new_full_owner) + request.user.username
+            node.full_owner.append(new_full_owner)
+            node.full_owner_link.append(a)
+            node.save()
+            return HttpResponse("You've added the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('part_owner') is not None:
+            new_part_owner = Customer.objects.get(username=request.query_params.get('part_owner'))
+            b = str(new_part_owner) + request.user.username
+            node.part_owner.append(new_part_owner)
+            node.part_owner_link.append(b)
+            node.save()
+            return HttpResponse("You've added the part access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_full_owner') is not None:
+            remove_full_owner = Customer.objects.get(username=request.query_params.get('remove_full_owner'))
+            a = str(remove_full_owner) + request.user.username
+            full_owner_links=node.full_owner_link
+            if full_owner_links is not None:
+                for i in full_owner_links:
+                    if i == a:
+                        node.full_owner.remove(str(remove_full_owner))
+                        #city.full_owner.remove(remove_full_owner)
+                        node.full_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the full access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_part_owner') is not None:
+            remove_part_owner = Customer.objects.get(username=request.query_params.get('remove_part_owner'))
+            a = str(remove_part_owner) + request.user.username
+            part_owner_links=node.part_owner_link
+            if part_owner_links is not None:
+                for i in part_owner_links:
+                    if i == a:
+                        node.part_owner.remove(str(remove_part_owner))
+                        node.part_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the part access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the part access for this user", status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(node, status=status.HTTP_200_OK)
+
 
 
 class DeviceListGV(generics.ListCreateAPIView):
@@ -123,6 +368,10 @@ class DeviceListGV(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['dev_eui', 'owner', 'uuid']
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        username = self.request.user.username
+        return Device.objects.filter(owner__username=username)
 
 
 class DeviceDateTimeRangeGV(generics.ListAPIView):
@@ -144,6 +393,55 @@ class DeviceDetailGV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Device.objects.all()
     serializer_class = DeviceSerializer
     permission_classes = [IsCustomer]
+
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        node = Device.objects.get(pk=pk)
+        #owner_link = city.owner_link.all()
+        if request.query_params.get('full_owner') is not None:
+            new_full_owner = Customer.objects.get(username=request.query_params.get('full_owner'))
+            a = str(new_full_owner) + request.user.username
+            node.full_owner.append(new_full_owner)
+            node.full_owner_link.append(a)
+            node.save()
+            return HttpResponse("You've added the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('part_owner') is not None:
+            new_part_owner = Customer.objects.get(username=request.query_params.get('part_owner'))
+            b = str(new_part_owner) + request.user.username
+            node.part_owner.append(new_part_owner)
+            node.part_owner_link.append(b)
+            node.save()
+            return HttpResponse("You've added the part access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_full_owner') is not None:
+            remove_full_owner = Customer.objects.get(username=request.query_params.get('remove_full_owner'))
+            a = str(remove_full_owner) + request.user.username
+            full_owner_links=node.full_owner_link
+            if full_owner_links is not None:
+                for i in full_owner_links:
+                    if i == a:
+                        node.full_owner.remove(str(remove_full_owner))
+                        #city.full_owner.remove(remove_full_owner)
+                        node.full_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the full access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_part_owner') is not None:
+            remove_part_owner = Customer.objects.get(username=request.query_params.get('remove_part_owner'))
+            a = str(remove_part_owner) + request.user.username
+            part_owner_links=node.part_owner_link
+            if part_owner_links is not None:
+                for i in part_owner_links:
+                    if i == a:
+                        node.part_owner.remove(str(remove_part_owner))
+                        node.part_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the part access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the part access for this user", status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(node, status=status.HTTP_200_OK)
+
 
 
 class PassthroughRenderer(renderers.BaseRenderer):
@@ -183,8 +481,130 @@ class MeterListGV(generics.ListCreateAPIView):
     filterset_fields = ['serial_number', 'uuid']
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        username = self.request.user.username
+        return Meter.objects.filter(owner__username=username)
+
 
 class MeterDetailGV(generics.RetrieveUpdateDestroyAPIView):
     queryset = Meter.objects.all()
     serializer_class = MeterSerializer
     permission_classes = [IsCustomer] 
+    def post(self, request, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        node = Meter.objects.get(pk=pk)
+        #owner_link = city.owner_link.all()
+        if request.query_params.get('full_owner') is not None:
+            new_full_owner = Customer.objects.get(username=request.query_params.get('full_owner'))
+            a = str(new_full_owner) + request.user.username
+            node.full_owner.append(new_full_owner)
+            node.full_owner_link.append(a)
+            node.save()
+            return HttpResponse("You've added the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('part_owner') is not None:
+            new_part_owner = Customer.objects.get(username=request.query_params.get('part_owner'))
+            b = str(new_part_owner) + request.user.username
+            node.part_owner.append(new_part_owner)
+            node.part_owner_link.append(b)
+            node.save()
+            return HttpResponse("You've added the part access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_full_owner') is not None:
+            remove_full_owner = Customer.objects.get(username=request.query_params.get('remove_full_owner'))
+            a = str(remove_full_owner) + request.user.username
+            full_owner_links=node.full_owner_link
+            if full_owner_links is not None:
+                for i in full_owner_links:
+                    if i == a:
+                        node.full_owner.remove(str(remove_full_owner))
+                        #city.full_owner.remove(remove_full_owner)
+                        node.full_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the full access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the full access for this user", status=status.HTTP_200_OK)
+        elif request.query_params.get('remove_part_owner') is not None:
+            remove_part_owner = Customer.objects.get(username=request.query_params.get('remove_part_owner'))
+            a = str(remove_part_owner) + request.user.username
+            part_owner_links=node.part_owner_link
+            if part_owner_links is not None:
+                for i in part_owner_links:
+                    if i == a:
+                        node.part_owner.remove(str(remove_part_owner))
+                        node.part_owner_link.remove(a)
+                        node.save()
+                        return HttpResponse("You've removed the part access for this user", status=status.HTTP_200_OK)
+                    else:
+                        return HttpResponse("You can't remove the part access for this user", status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(node, status=status.HTTP_200_OK)
+
+
+
+class CityUUIDListGV(generics.ListAPIView):
+    queryset = City.objects.all()
+    serializer_class = CityUUIDSerializer
+
+
+class CityUUIDDetailGV(generics.RetrieveAPIView):
+    queryset = City.objects.all()
+    serializer_class = CityUUIDSerializer
+  
+
+class DistrictUUIDListGV(generics.ListAPIView):
+    queryset = District.objects.all()
+    serializer_class = DistrictUUIDSerializer
+ 
+
+class DistrictUUIDDetailGV(generics.RetrieveAPIView):
+    queryset = District.objects.all()
+    serializer_class = DistrictUUIDSerializer
+
+
+class StreetUUIDListGV(generics.ListAPIView):
+    queryset = Street.objects.all()
+    serializer_class = StreetUUIDSerializer
+
+
+class StreetUUIDDetailGV(generics.RetrieveAPIView):
+    queryset = Street.objects.all()
+    serializer_class = StreetUUIDSerializer
+
+
+class HouseUUIDListGV(generics.ListAPIView):
+    queryset = House.objects.all()
+    serializer_class = HouseUUIDSerializer
+
+
+class HouseUUIDDetailGV(generics.RetrieveAPIView):
+    queryset = House.objects.all()
+    serializer_class = HouseUUIDSerializer
+
+
+class ApartmentUUIDListGV(generics.ListAPIView):
+    queryset = Apartment.objects.all()
+    serializer_class = ApartmentUUIDSerializer
+
+
+class ApartmentUUIDDetailGV(generics.RetrieveAPIView):
+    queryset = Apartment.objects.all()
+    serializer_class = ApartmentUUIDSerializer
+
+
+class DeviceUUIDListGV(generics.ListAPIView):
+    queryset = Device.objects.all()
+    serializer_class = DeviceUUIDSerializer
+
+
+class DeviceUUIDDetailGV(generics.RetrieveAPIView):
+    queryset = Device.objects.all()
+    serializer_class = DeviceUUIDSerializer
+
+
+class MeterUUIDListGV(generics.ListAPIView):
+    queryset = Meter.objects.all()
+    serializer_class = MeterUUIDSerializer
+
+
+class MeterUUIDDetailGV(generics.RetrieveAPIView):
+    queryset = Meter.objects.all()
+    serializer_class = MeterUUIDSerializer

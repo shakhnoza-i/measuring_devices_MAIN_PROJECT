@@ -33,27 +33,11 @@ class UUIDRelatedField(RelatedField):
 
 
 
-class MeterSerializer(serializers.ModelSerializer):   
-
-    class Meta:
-        model = Meter
-        fields = "__all__"
-
-
 class MeterValueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meter
         fields = ['uuid', 'initial_value', 'unit',]
-
-
-class DeviceSerializer(serializers.ModelSerializer):
-
-    meters = UUIDRelatedField(many=True, queryset=Meter.objects.all(), uuid_field='uuid')
-    
-    class Meta:
-        model = Device
-        fields = "__all__"
 
 
 class DeviceDateTimeRangeSerializer(serializers.ModelSerializer):
@@ -65,45 +49,125 @@ class DeviceDateTimeRangeSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ApartmentSerializer(serializers.ModelSerializer):
-    devices = DeviceSerializer(many=True, read_only=True) #add related(selected) field 
+class MeterUUIDSerializer(serializers.ModelSerializer):   
+
+    class Meta:
+        model = Meter
+        exclude = ['full_owner', 'part_owner', 'full_owner_link', 'part_owner_link',]
+        #fields = "__all__"
+
+
+class DeviceUUIDSerializer(serializers.ModelSerializer):
+
+    meters = UUIDRelatedField(many=True, queryset=Meter.objects.all(), uuid_field='uuid')
+    
+    class Meta:
+        model = Device
+        fields = ['name', 'meters']
+
+
+class ApartmentUUIDSerializer(serializers.ModelSerializer):
+    devices = DeviceUUIDSerializer(many=True, read_only=True)
     
     class Meta:
         model = Apartment
-        fields = '__all__'
+        fields = ['name', 'devices']
 
 
-class HouseSerializer(serializers.ModelSerializer):
+class HouseUUIDSerializer(serializers.ModelSerializer):
 
-    apartments = ApartmentSerializer(many=True, read_only=True)
+    apartments = ApartmentUUIDSerializer(many=True, read_only=True)
     
     class Meta:
         model = House
-        fields = "__all__"
+        fields = ['name', 'apartments']
 
 
-class StreetSerializer(serializers.ModelSerializer):
+class StreetUUIDSerializer(serializers.ModelSerializer):
 
-    houses = HouseSerializer(many=True, read_only=True)
+    houses = HouseUUIDSerializer(many=True, read_only=True)
 
     class Meta:
         model = Street
+        fields = ['name', 'houses']
+
+
+class DistrictUUIDSerializer(serializers.ModelSerializer):
+
+    streets = StreetUUIDSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = District
+        fields = ['name', 'streets']
+
+
+class CityUUIDSerializer(serializers.ModelSerializer):
+
+    districts = DistrictUUIDSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = City
+        fields = ['name', 'districts']
+
+
+
+class CitySerializer(serializers.ModelSerializer):
+
+    districts = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = City
+        #exclude = ['full_owner', 'part_owner', 'full_owner_link', 'part_owner_link',]
         fields = "__all__"
 
 
 class DistrictSerializer(serializers.ModelSerializer):
 
-    streets = StreetSerializer(many=True, read_only=True)
+    streets = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         model = District
-        fields = "__all__"
+        exclude = ['full_owner', 'part_owner', 'full_owner_link', 'part_owner_link',]
 
 
-class CitySerializer(serializers.ModelSerializer):
+class StreetSerializer(serializers.ModelSerializer):
 
-    districts = DistrictSerializer(many=True, read_only=True)
+    houses = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
-        model = City
-        fields = "__all__"
+        model = Street
+        exclude = ['full_owner', 'part_owner', 'full_owner_link', 'part_owner_link',]
+
+
+class HouseSerializer(serializers.ModelSerializer):
+
+    apartments = serializers.StringRelatedField(many=True, read_only=True)
+    
+    class Meta:
+        model = House
+        exclude = ['full_owner', 'part_owner', 'full_owner_link', 'part_owner_link',]
+
+
+class ApartmentSerializer(serializers.ModelSerializer):
+
+    device = serializers.StringRelatedField(many=True, read_only=True)
+    
+    class Meta:
+        model = Apartment
+        exclude = ['full_owner', 'part_owner', 'full_owner_link', 'part_owner_link',]
+
+
+class DeviceSerializer(serializers.ModelSerializer):
+
+    meter = UUIDRelatedField(many=True, queryset=Meter.objects.all(), uuid_field='uuid')
+    
+    class Meta:
+        model = Device
+        exclude = ['full_owner', 'part_owner', 'full_owner_link', 'part_owner_link',]
+
+
+class MeterSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Meter
+        exclude = ['full_owner', 'part_owner', 'full_owner_link', 'part_owner_link',]

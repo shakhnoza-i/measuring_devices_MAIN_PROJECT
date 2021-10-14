@@ -11,18 +11,19 @@ class IsCustomer(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         
-        full_owners = obj.full_owner # queryset
+        full_owners = obj.full_owner
         part_owners = obj.part_owner
 
         if obj.owner == request.user or request.user.is_staff:
             return True
-        elif full_owners.exist():
+        elif full_owners is not None:
             for i in full_owners:
-                if i == request.user:
+                if i == request.user.username:
                     return True
-        elif part_owners.exist() and request.method in permissions.SAFE_METHODS:
+        # elif part_owners is not None and request.method == "GET":
+        elif part_owners is not None and request.method in permissions.SAFE_METHODS:
             for i in part_owners:
-                if i == request.user:
+                if i == request.user.username:
                     return True
         else:
             return False
