@@ -2,7 +2,6 @@
     Python 
     Django 
     Django Rest Framework 
-    Django-Filter 
     Docker 
     Docker-Compose 
     Celery 
