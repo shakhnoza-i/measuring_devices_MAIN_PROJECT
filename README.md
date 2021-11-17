@@ -7,6 +7,7 @@
     Docker-Compose 
     Celery 
     Redis
+    Postgres(Postgis extension)
 
     СТруктура - описание положения привязанных объектов:
 
