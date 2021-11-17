@@ -4,21 +4,21 @@ volumes:
   postgis-data:
 
 services:
-  meter_project: # name of our service
-    build: # build configuration
-      context: . # dot means in our current directory
+  meter_project:
+    build:
+      context: .
     container_name: meter_project
     ports:
-      - "8000:8000" #from port 8000 on our host to port 8000 on our image.
-    volumes: #volume allows us to get the updates that we make to our project into our Docker image in real time.
-      - ./meter_project:/meter_project #maps the app directory which we have in our project to the app directory in our Docker image.
+      - "8000:8000"
+    volumes:
+      - ./meter_project:/meter_project
     #command: tail -F anything
     command: bash -c "sleep 5s && python3 manage.py migrate  && python3 manage.py runserver 0.0.0.0:8000" 
     environment:  
-      - DB_HOST=db # equal to the name of the service
-      - DB_NAME=gis # equal to the POSTGRES_DB name
-      - DB_USER=docker # equal to the POSTGRES_USER
-      - DB_PASS=docker # equal to the POSTGRES_PASSWORD
+      - DB_HOST=db
+      - DB_NAME=gis
+      - DB_USER=docker
+      - DB_PASS=docker
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
     depends_on: # when our app service depends on db
@@ -32,10 +32,10 @@ services:
     volumes:
       - .:/usr/src/app
     environment:
-      - DB_HOST=db # equal to the name of the service
-      - DB_NAME=gis # equal to the POSTGRES_DB name
-      - DB_USER=docker # equal to the POSTGRES_USER
-      - DB_PASS=docker # equal to the POSTGRES_PASSWORD
+      - DB_HOST=db
+      - DB_NAME=gis
+      - DB_USER=docker
+      - DB_PASS=docker
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
     depends_on:
@@ -50,7 +50,7 @@ services:
       - postgis-data:/var/lib/postgresql
       - dbbackups:/backups
 
-    environment:  # important that this is written exactly as the setting that Postgres container is expecting when it starts.
+    environment: 
       - POSTGRES_DB=gis
       - POSTGRES_USER=docker
       - POSTGRES_PASSWORD=docker
